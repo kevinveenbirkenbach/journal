@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: ./nginx/Dockerfile
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+      - ./backend/public:/usr/share/nginx/api
+    ports:
+      - "80:80"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/var/www
+    environment:
+      - DATABASE_URL=mariadb://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
+    depends_on:
+      - db
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+  db_data:
