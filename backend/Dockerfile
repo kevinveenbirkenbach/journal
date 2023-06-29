@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash 
+RUN apt-get install -y symfony-cli
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY . /var/www/
 CMD composer install ; php -S 0.0.0.0:8000 -t public
