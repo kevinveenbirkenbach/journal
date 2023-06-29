@@ -1,14 +1,14 @@
 version: "3.7"
 services:
-#  nginx:
-#    build:
-#      context: ./
-#      dockerfile: ./docker/nginx/Dockerfile
-#    volumes:
-#      - ./docker/frontend/build:/usr/share/nginx/html
-#      - ./docker/backend/public:/usr/share/nginx/api
-#    ports:
-#      - "80:80"
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+      - ./backend/public:/usr/share/nginx/api
+    ports:
+      - "80:80"
   frontend:
     build:
       context: ./frontend
