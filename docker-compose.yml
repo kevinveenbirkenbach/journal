@@ -9,6 +9,9 @@ services:
       - ./backend/public:/usr/share/nginx/api
     ports:
       - "80:80"
+    depends_on:
+      - frontend
+      - backend
   frontend:
     build:
       context: ./frontend
