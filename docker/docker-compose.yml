@@ -29,8 +29,8 @@ services:
     environment:
       - DATABASE_URL=mariadb://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
     depends_on:
-      - db
-  db:
+      - database
+  database:
     image: mariadb:latest
     restart: always
     environment:
@@ -39,6 +39,6 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
-      - db_data:/var/lib/mysql
+      - database:/var/lib/mysql
 volumes:
-  db_data:
+  database:
