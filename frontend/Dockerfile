@@ -1,7 +1,7 @@
 FROM node:lts
 WORKDIR /app
-COPY package.json /app
+COPY ./codebase/package.json /app
 RUN npm install
-COPY . /app
+COPY ./codebase /app
 CMD npm start
 EXPOSE 3000
