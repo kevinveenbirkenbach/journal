@@ -1,9 +1,3 @@
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Entry</button>
-</form>
-
 <ul>
     {% for entry in entries %}
     <li>{{ entry.start_time }} - {{ entry.description }}</li>

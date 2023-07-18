@@ -23,3 +23,14 @@ def add_location(request):
 
     locations = Location.objects.all()
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations})
+
+def add_entry(request):
+    if request.method == "POST":
+        form = EntryForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = EntryForm()
+    
+    entries = Entry.objects.all()
+    return render(request, 'journal_app/add_entry.html', {'form': form, 'entries': entries})    

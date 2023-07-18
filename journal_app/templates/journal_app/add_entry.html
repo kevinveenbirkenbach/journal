@@ -1,0 +1,15 @@
+<h1>Add Entry</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.start_time.label_tag }} {{ form.start_time }}
+    {{ form.end_time.label_tag }} {{ form.end_time }}
+    {{ form.description.label_tag }} {{ form.description }}
+    {{ form.location.label_tag }} {{ form.location }}
+    {{ form.parent_entries.label_tag }}
+    <select name="parent_entries" multiple>
+        {% for entry in entries %}
+            <option value="{{ entry.id }}">{{ entry }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Submit">
+</form>

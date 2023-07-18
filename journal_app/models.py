@@ -10,3 +10,8 @@ class Entry(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     description = models.TextField()
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+    parent_entries = models.ManyToManyField('self', blank=True, related_name='sub_entries')
+
+    def __str__(self):
+        return f'Entry from {self.start_time} - {self.description[:20]}'
+
