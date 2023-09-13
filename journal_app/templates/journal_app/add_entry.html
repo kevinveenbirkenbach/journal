@@ -1,37 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 {% include "errors.html" with form=time_frame_form form_name="TimeFrame" %}
 {% include "errors.html" with form=entry_form form_name="Entry" %}
 
-{% if entry_form.errors %}
-    <div class="alert alert-danger">
-        <strong>Entry Form Errors:</strong>
-        <ul>
-            {% for field, errors in entry_form.errors.items %}
-                {% for error in errors %}
-                    <li>{{ field }}: {{ error }}</li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
+{% load widget_tweaks %}
 
-<h1>Add Entry</h1>
-<form method="POST">
+<h1 class="mb-4">Add Entry</h1>
+
+<form method="POST" class="needs-validation" novalidate>
     {% csrf_token %}
+    
+    <div class="form-group">
+        {{ entry_form.description.label_tag }} {{ entry_form.description|add_class:"form-control" }}
+    </div>
 
-    <!-- Entry Fields -->
-    <table>
-        {{ entry_form.as_table }}
-        <tr>
-            <td>{{ time_frame_form.start_time.label_tag }}</td><td>{{ time_frame_form.start_time }}</td>
-        </tr>
-        <tr>    
-            <td>{{ time_frame_form.end_time.label_tag }}</td><td>{{ time_frame_form.end_time }}</td>
-        </tr>
-    </table>
-    <input type="submit" value="Submit">
+    <div class="form-group">
+        {{ entry_form.location.label_tag }} {{ entry_form.location|add_class:"form-control" }}
+    </div>
+
+    <div class="form-group">
+        {{ entry_form.parent_entries.label_tag }} {{ entry_form.parent_entries|add_class:"form-control" }}
+    </div>
+
+    <!-- TimeFrame Fields -->
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {{ time_frame_form.start_time.label_tag }} {{ time_frame_form.start_time|add_class:"form-control" }}
+        </div>
+        <div class="form-group col-md-6">
+            {{ time_frame_form.end_time.label_tag }} {{ time_frame_form.end_time|add_class:"form-control" }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 {% endblock %}
