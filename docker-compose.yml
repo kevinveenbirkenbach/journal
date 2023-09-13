@@ -28,6 +28,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - database:/var/lib/postgresql/data
 networks:
   default:
     driver: bridge
+volumes:
+  database:
