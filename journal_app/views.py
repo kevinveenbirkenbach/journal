@@ -30,12 +30,27 @@ def add_entry(request):
 
     if request.method == "POST":
         if time_frame_form.is_valid() and entry_form.is_valid():
+            # Save the TimeFrame instance but don't commit to the database yet
             time_frame = time_frame_form.save()
+            
+            # Save the Entry instance but don't commit to the database yet
             entry = entry_form.save(commit=False)
-            entry.time_frame = time_frame  # Associate the TimeFrame with the Entry
-            entry.user = request.user  # Set the user
+            
+            # Associate the TimeFrame with the Entry
+            entry.time_frame = time_frame
+            
+            # Set the user for the Entry
+            entry.user = request.user
+            
+            # Save the Entry to the database
             entry.save()
-            entry_form.save_m2m()  # Save many-to-many data if needed
+            
+            # Save the TimeFrame to the database
+            time_frame.save()
+            
+            # Save many-to-many data if needed
+            entry_form.save_m2m()
 
     entries = Entry.objects.all()
     return render(request, 'journal_app/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'entries': entries})
+
