@@ -3,6 +3,10 @@ from .models import Entry, Location
 from .forms import EntryForm, LocationForm
 from django.contrib.auth.decorators import login_required
 
+@login_required
+def profile(request):
+    return render(request, 'journal_app/profile.html')
+
 def index(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)
