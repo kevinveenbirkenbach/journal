@@ -1,18 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if time_frame_form.errors %}
-    <div class="alert alert-danger">
-        <strong>TimeFrame Form Errors:</strong>
-        <ul>
-            {% for field, errors in time_frame_form.errors.items %}
-                {% for error in errors %}
-                    <li>{{ field }}: {{ error }}</li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
+{% include "errors.html" with form=time_frame_form form_name="TimeFrame" %}
+{% include "errors.html" with form=entry_form form_name="Entry" %}
 
 {% if entry_form.errors %}
     <div class="alert alert-danger">
@@ -30,15 +20,17 @@
 <h1>Add Entry</h1>
 <form method="POST">
     {% csrf_token %}
-    
-    <!-- TimeFrame Fields -->
-    {{ time_frame_form.start_time.label_tag }} {{ time_frame_form.start_time }}
-    {{ time_frame_form.end_time.label_tag }} {{ time_frame_form.end_time }}
 
-    {{ entry_form.description.label_tag }} {{ entry_form.description }}
-    {{ entry_form.location.label_tag }} {{ entry_form.location }}
-    {{ entry_form.parent_entries.label_tag }} {{ entry_form.parent_entries }}
-    
+    <!-- Entry Fields -->
+    <table>
+        {{ entry_form.as_table }}
+        <tr>
+            <td>{{ time_frame_form.start_time.label_tag }}</td><td>{{ time_frame_form.start_time }}</td>
+        </tr>
+        <tr>    
+            <td>{{ time_frame_form.end_time.label_tag }}</td><td>{{ time_frame_form.end_time }}</td>
+        </tr>
+    </table>
     <input type="submit" value="Submit">
 </form>
 
