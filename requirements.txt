@@ -1,4 +1,7 @@
 Django
+django
 gunicorn
 python-decouple
 psycopg2
+djangorestframework
+requests
