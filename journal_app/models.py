@@ -4,8 +4,8 @@ from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 
 class TimeFrame(models.Model):
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
     
     def clean(self):
         if not self.end_time and not self.start_time:
