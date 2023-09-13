@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     logging:
       driver: journald
-    entrypoint: bash ./entrypoint.sh
+    entrypoint: bash ./scripts/entrypoint.sh
     volumes:
       - .:/app
     ports:
