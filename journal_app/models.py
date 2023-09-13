@@ -3,13 +3,16 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 
+class NoAttributSet(ValidationError):
+    pass
+
 class TimeFrame(models.Model):
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     
     def clean(self):
         if not self.end_time and not self.start_time:
-            raise ValidationError(_('Start or end time must be set.'))
+            raise NoAttributSet(_('Start or end time must be set.123'))
         if self.end_time and self.start_time:
             if self.end_time <= self.start_time:
                 raise ValidationError(_('End time must be after start time.'))

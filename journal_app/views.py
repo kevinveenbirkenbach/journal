@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Entry, Location, TimeFrame
+from .models import Entry, Location, TimeFrame, NoAttributSet
 from .forms import EntryForm, LocationForm, TimeFrameForm
 from django.contrib.auth.decorators import login_required
 
@@ -24,20 +24,34 @@ def add_location(request):
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations})
 
 @login_required
-def add_entry(request):
-    time_frame_form = TimeFrameForm(request.POST or None)
-    entry_form = EntryForm(request.POST or None)
-
+def add_entry(request): 
+    time_frame_form = TimeFrameForm(None)
+    entry_form = EntryForm(None)
     if request.method == "POST":
-        if time_frame_form.is_valid() and entry_form.is_valid():
-            # Save the TimeFrame instance but don't commit to the database yet
-            time_frame = time_frame_form.save()
+        entry_form = EntryForm(request.POST)
+        if ('end_time' in request.POST and request.POST['end_time']) or ('start_time' in request.POST and request.POST['start_time']):
+            time_frame_form = TimeFrameForm(request.POST)
+            pass
+        time_frame = None
+        try:
+            if time_frame_form.is_valid():
+                 # Save the TimeFrame instance but don't commit to the database yet
+                time_frame = time_frame_form.save()
+        except NoAttributSet:
+            time_frame_form = TimeFrameForm(None)
+        
+        if entry_form.is_valid():
+           
             
             # Save the Entry instance but don't commit to the database yet
             entry = entry_form.save(commit=False)
             
-            # Associate the TimeFrame with the Entry
-            entry.time_frame = time_frame
+            if time_frame:
+                # Associate the TimeFrame with the Entry
+                entry.time_frame = time_frame
+                
+                # Save the TimeFrame to the database
+                time_frame.save()
             
             # Set the user for the Entry
             entry.user = request.user
@@ -45,8 +59,6 @@ def add_entry(request):
             # Save the Entry to the database
             entry.save()
             
-            # Save the TimeFrame to the database
-            time_frame.save()
             
             # Save many-to-many data if needed
             entry_form.save_m2m()
