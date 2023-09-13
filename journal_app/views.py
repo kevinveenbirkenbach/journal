@@ -3,7 +3,6 @@ from .models import Entry, Location
 from .forms import EntryForm, LocationForm
 from django.contrib.auth.decorators import login_required
 
-@login_required
 def index(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)

@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Add Entry</h1>
 <form method="POST">
     {% csrf_token %}
@@ -13,3 +16,4 @@
     </select>
     <input type="submit" value="Submit">
 </form>
+{% endblock %}

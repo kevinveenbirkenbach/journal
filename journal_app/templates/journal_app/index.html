@@ -1,5 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
 <ul>
     {% for entry in entries %}
     <li>{{ entry.user.username }}: {{ entry.start_time }} - {{ entry.description }}</li>
     {% endfor %}
 </ul>
+{% endblock %}
