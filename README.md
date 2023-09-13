@@ -8,5 +8,5 @@ sudo docker-compose exec -it web bash
 ```
 
 ```bash
-rm -rv ./*__pycache__
+rm -rv ./*/__pycache__
 ```

@@ -1,5 +1,5 @@
 <ul>
     {% for entry in entries %}
-    <li>{{ entry.start_time }} - {{ entry.description }}</li>
+    <li>{{ entry.user.username }}: {{ entry.start_time }} - {{ entry.description }}</li>
     {% endfor %}
 </ul>

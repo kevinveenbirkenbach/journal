@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
@@ -11,6 +12,7 @@ class Entry(models.Model):
     description = models.TextField()
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
     parent_entries = models.ManyToManyField('self', blank=True, related_name='sub_entries')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'Entry from {self.start_time} - {self.description[:20]}'

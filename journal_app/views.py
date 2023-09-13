@@ -6,7 +6,10 @@ def index(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
-            form.save()
+            entry = form.save(commit=False)
+            entry.user = request.user  # Set the user
+            entry.save()
+            form.save_m2m()  # Save many-to-many data if needed
     else:
         form = EntryForm()
 
@@ -28,7 +31,10 @@ def add_entry(request):
     if request.method == "POST":
         form = EntryForm(request.POST)
         if form.is_valid():
-            form.save()
+            entry = form.save(commit=False)
+            entry.user = request.user  # Set the user
+            entry.save()
+            form.save_m2m()  # Save many-to-many data if needed
     else:
         form = EntryForm()
     
