@@ -1,0 +1,1 @@
+docker stop journal_app; yes | docker image prune && docker build -t journal_app . && docker run -p 8000:8000 -d journal_app
