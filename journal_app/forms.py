@@ -10,11 +10,11 @@ class TimeFrameForm(forms.ModelForm):
         fields = ['start_time', 'end_time']
 
 class EntryForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea())
+    description = forms.CharField(widget=forms.Textarea(), required=False)
     
     class Meta:
         model = Entry
-        fields = ['description', 'location', 'parent_entries']
+        fields = ['title', 'description', 'location', 'parent_entries']
 
 class LocationForm(forms.ModelForm):
     latitude = forms.FloatField(widget=forms.NumberInput(attrs={'min': '-90', 'max': '90'}))
