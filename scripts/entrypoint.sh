@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pip install --no-cache-dir -r /app/requirements.txt
+
 # Migrate database
 bash /app/scripts/migrate.sh
 
