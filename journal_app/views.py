@@ -44,12 +44,6 @@ def add_location(request):
     locations = Location.objects.all()
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
-
-from django.db.models import Q
-from django.shortcuts import render, redirect
-from .models import Entry
-from .forms import SearchForm, BulkDeleteForm
-
 def filter_entries(request):
     search_form = SearchForm(request.GET)
     bulk_delete_form = BulkDeleteForm(request.POST or None)
