@@ -21,6 +21,30 @@
                     <input type="datetime-local" name="end_time" class="form-control">
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>{% trans "Start Time Greater Than" %}</label>
+                    <input type="datetime-local" name="start_time_gte" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>{% trans "Start Time Less Than" %}</label>
+                    <input type="datetime-local" name="start_time_lte" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>{% trans "End Time Greater Than" %}</label>
+                    <input type="datetime-local" name="end_time_gte" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>{% trans "End Time Less Than" %}</label>
+                    <input type="datetime-local" name="end_time_lte" class="form-control">
+                </div>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
     </form>

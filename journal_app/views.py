@@ -58,6 +58,41 @@ def filter_entries(request):
         if query:
             filtered_entries = filtered_entries.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
+        start_time_gte = request.GET.get('start_time_gte')
+        if start_time_gte:
+            try:
+                start_time_gte = datetime.strptime(start_time_gte, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__start_time__gte=start_time_gte)
+            except ValueError:
+                pass
+            
+        # Filter by start_time_lte
+        start_time_lte = request.GET.get('start_time_lte')
+        if start_time_lte:
+            try:
+                start_time_lte = datetime.strptime(start_time_lte, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__start_time__lte=start_time_lte)
+            except ValueError:
+                pass
+            
+        # Filter by end_time_gte
+        end_time_gte = request.GET.get('end_time_gte')
+        if end_time_gte:
+            try:
+                end_time_gte = datetime.strptime(end_time_gte, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__end_time__gte=end_time_gte)
+            except ValueError:
+                pass
+            
+        # Filter by end_time_lte
+        end_time_lte = request.GET.get('end_time_lte')
+        if end_time_lte:
+            try:
+                end_time_lte = datetime.strptime(end_time_lte, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__end_time__lte=end_time_lte)
+            except ValueError:
+                pass
+
         # Filter by time frame
         if start_time:
             try:
