@@ -141,6 +141,8 @@ def add_entry(request):
             
             # Save many-to-many data if needed
             entry_form.save_m2m()
+            return redirect('edit_entry', entry_id=entry.id)
+            
     return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'nav_items': getNavigationItems(request)})
 
 @login_required
