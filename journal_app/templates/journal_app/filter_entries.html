@@ -9,10 +9,10 @@
             {% for field in query_params %}
             <div class="col-md-4">
                 <div class="form-group">
-                    {% if field == 'q' %}
+                    <label>{% trans field %}</label>
+                    {% if field == 'description' or field == 'title' %}
                         <input type="text" name="{{ field }}" class="form-control" placeholder="{% trans 'Search' %}">
                     {% else %}
-                        <label>{% trans field %}</label>
                         <input type="datetime-local" name="{{ field }}" class="form-control">
                     {% endif %}
                 </div>
@@ -23,42 +23,50 @@
     </form>
 
     <h2>{% trans "Filtered Entries" %}</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>{% trans "Title" %}</th>
-                <th>{% trans "Description" %}</th>
-                <th>{% trans "Location" %}</th>
-                <th>{% trans "Start Time" %}</th>
-                <th>{% trans "End Time" %}</th>
-                <th>{% trans "Actions" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in filtered_entries %}
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ entry.title|truncatechars:50 }}</td>
-                    <td data-toggle="tooltip" data-placement="bottom" title="{{ entry.description }}">{{ entry.description|truncatechars:50 }}</td>
-                    <td>{{ entry.location }}</td>
-                    <td>{{ entry.time_frame.start_time }}</td>
-                    <td>{{ entry.time_frame.end_time }}</td>
-                    <td>
-                        <a href="{% url 'edit_entry' entry.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
-                        <a href="{% url 'delete_entry' entry.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
-                    </td>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Location" %}</th>
+                    <th>{% trans "Start Time" %}</th>
+                    <th>{% trans "End Time" %}</th>
+                    <th>{% trans "Actions" %}</th>
                 </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">{% trans "No entries found." %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for entry in filtered_entries %}
+                    <tr>
+                        <td><input type="checkbox" name="selected_entries" value="{{ entry.id }}"></td>
+                        <td>{{ entry.title|truncatechars:50 }}</td>
+                        <td data-toggle="tooltip" data-placement="bottom" title="{{ entry.description }}">{{ entry.description|truncatechars:50 }}</td>
+                        <td>{{ entry.location }}</td>
+                        <td>{{ entry.time_frame.start_time }}</td>
+                        <td>{{ entry.time_frame.end_time }}</td>
+                        <td>
+                            <a href="{% url 'edit_entry' entry.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
+                            <a href="{% url 'delete_entry' entry.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">{% trans "No entries found." %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" value="Delete Selected Entries">
+    </form>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+            $('#select_all').click(function() {
+                $('input[type="checkbox"]').prop('checked', this.checked);
+            });
+        });
+    </script>
 </div>
-
-<script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
 {% endblock %}

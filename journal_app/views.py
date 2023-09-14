@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Entry, Location, TimeFrame, NoAttributSet
-from .forms import EntryForm, LocationForm, TimeFrameForm
+from .forms import EntryForm, LocationForm, TimeFrameForm, BulkDeleteForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.urls import reverse
@@ -45,9 +45,9 @@ def add_location(request):
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
 def filter_entries(request):
-    query_params = ['q', 'start_time', 'end_time', 'start_time_gte', 'start_time_lte', 'end_time_gte', 'end_time_lte']
+    query_params = ['title','description', 'start_time', 'end_time', 'start_time_gte', 'start_time_lte', 'end_time_gte', 'end_time_lte']
+    filters = {}
     if request.method == 'GET':
-        filters = {}
         for param in query_params:
             value = request.GET.get(param)
             if value:
@@ -59,9 +59,18 @@ def filter_entries(request):
                         pass
                 else:
                     filters[f'{param}__icontains'] = value
-
-        filtered_entries = Entry.objects.filter(**filters)
-        return render(request, 'journal_app/filter_entries.html', {'filtered_entries': filtered_entries, 'query_params': query_params})
+    filtered_entries = Entry.objects.filter(**filters)
+    bulk_delete_form = BulkDeleteForm(request.POST or None)
+    if request.method == 'POST' and bulk_delete_form.is_valid():
+        selected_entries = bulk_delete_form.cleaned_data['selected_entries']
+        selected_entries.delete()
+        
+    context = {
+        'filtered_entries': filtered_entries,
+        'query_params': query_params,
+        'bulk_delete_form': bulk_delete_form,
+    }
+    return render(request, 'journal_app/filter_entries.html', context)
 
 @login_required
 def edit_entry(request, entry_id):

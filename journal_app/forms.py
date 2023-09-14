@@ -23,3 +23,6 @@ class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
         fields = ['name', 'latitude', 'longitude']
+        
+class BulkDeleteForm(forms.Form):
+    selected_entries = forms.ModelMultipleChoiceField(queryset=Entry.objects.all(), widget=forms.CheckboxSelectMultiple)
