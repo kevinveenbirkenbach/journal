@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Entry, Location, TimeFrame, NoAttributSet
-from .forms import EntryForm, LocationForm, TimeFrameForm, BulkDeleteForm
+from .forms import EntryForm, LocationForm, TimeFrameForm, BulkDeleteForm, SearchForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.urls import reverse
@@ -44,31 +44,49 @@ def add_location(request):
     locations = Location.objects.all()
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
+
 def filter_entries(request):
-    query_params = ['title','description', 'start_time', 'end_time', 'start_time_gte', 'start_time_lte', 'end_time_gte', 'end_time_lte']
     filters = {}
-    if request.method == 'GET':
-        for param in query_params:
-            value = request.GET.get(param)
-            if value:
-                if 'time' in param:
-                    try:
-                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M')
-                        filters[f'time_frame__{param}'] = value
-                    except ValueError:
-                        pass
-                else:
-                    filters[f'{param}__icontains'] = value
+    search_form = SearchForm(request.GET)
+
+    if request.method == 'GET' and search_form.is_valid():
+        title = search_form.cleaned_data.get('title')
+        description = search_form.cleaned_data.get('description')
+        start_time = search_form.cleaned_data.get('time_frame__start_time')
+        end_time = search_form.cleaned_data.get('time_frame__end_time')
+        start_time_gte = search_form.cleaned_data.get('time_frame__start_time_gte')
+        end_time_gte = search_form.cleaned_data.get('time_frame__end_time_gte')
+        start_time_lte = search_form.cleaned_data.get('time_frame__start_time_lte')
+        end_time_lte = search_form.cleaned_data.get('time_frame__end_time_lte')
+
+        if title:
+            filters['title__icontains'] = title
+        if description:
+            filters['description__icontains'] = description
+        if start_time:
+            filters['time_frame__start_time'] = start_time
+        if end_time:
+            filters['time_frame__end_time'] = end_time
+        if start_time_gte:
+            filters['time_frame__start_time__gte'] = start_time_gte
+        if end_time_gte:
+            filters['time_frame__end_time__gte'] = end_time_gte
+        if start_time_lte:
+            filters['time_frame__start_time__lte'] = start_time_lte
+        if end_time_lte:
+            filters['time_frame__end_time__lte'] = end_time_lte
+
     filtered_entries = Entry.objects.filter(**filters)
+
     bulk_delete_form = BulkDeleteForm(request.POST or None)
     if request.method == 'POST' and bulk_delete_form.is_valid():
         selected_entries = bulk_delete_form.cleaned_data['selected_entries']
         selected_entries.delete()
-        
+
     context = {
         'filtered_entries': filtered_entries,
-        'query_params': query_params,
         'bulk_delete_form': bulk_delete_form,
+        'search_form': search_form,
     }
     return render(request, 'journal_app/filter_entries.html', context)
 
