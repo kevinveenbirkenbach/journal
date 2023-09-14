@@ -38,7 +38,7 @@ class Entry(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
-    parent_entries = models.ManyToManyField('self', blank=True, related_name='sub_entries')
+    parent_entries = models.ManyToManyField('self', blank=True, related_name='child_entries')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     time_frame = models.ForeignKey(TimeFrame, on_delete=models.SET_NULL, null=True, blank=True, related_name='entry')
     history = HistoricalRecords()
