@@ -80,3 +80,17 @@ def add_entry(request):
             entry_form.save_m2m()
     return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form})
 
+@login_required
+def delete_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id)
+    
+    # Überprüfen Sie, ob der Benutzer der Eigentümer des Eintrags ist
+    if entry.user != request.user:
+        return HttpResponseForbidden("Sie haben keine Berechtigung, diesen Eintrag zu löschen.")
+
+    if request.method == 'POST':
+        entry.delete()
+        return redirect('index')  # Nach der Löschung zur Indexseite umleiten
+
+    return render(request, 'journal_app/entry/delete_entry.html', {'entry': entry})
+

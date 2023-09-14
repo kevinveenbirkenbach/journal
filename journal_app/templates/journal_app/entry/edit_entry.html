@@ -1,6 +1,8 @@
 {% extends "base.html" %}
-{% block content %}
-<h1 class="mb-4">Edit {{entry}}</h1>
-{% include "journal_app/entry/entry.html" with entry_form=entry_form time_frame_form=time_frame_form %}
+{% load i18n %}
 
+{% block content %}
+<h1 class="mb-4">{% trans "Edit" %} {{ entry }}</h1>
+{% include "journal_app/entry/entry.html" with entry_form=entry_form time_frame_form=time_frame_form %}
+<a href="{% url 'delete_entry' entry.id %}" class="btn btn-danger">{% blocktrans %}Delete entry{% endblocktrans %}</a>
 {% endblock %}
