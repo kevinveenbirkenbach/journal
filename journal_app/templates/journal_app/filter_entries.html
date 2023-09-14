@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Filter Entries</h1>
+<form method="get">
+    <div class="form-group">
+        <label for="start_time">Start Time:</label>
+        <input type="datetime-local" id="start_time" name="start_time">
+    </div>
+    <div class="form-group">
+        <label for="end_time">End Time:</label>
+        <input type="datetime-local" id="end_time" name="end_time">
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<h2>Filtered Entries</h2>
+<ul>
+    {% for entry in filtered_entries %}
+        <li>{{ entry.title }}</li>
+    {% empty %}
+        <li>No entries found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

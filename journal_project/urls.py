@@ -13,4 +13,5 @@ urlpatterns = [
     path('accounts/profile/', views.profile, name='profile'),
     path('entry/edit/<int:entry_id>/', views.edit_entry, name='edit_entry'),
     path('entry/delete/<int:entry_id>/', views.delete_entry, name='delete_entry'),
+    path('filter-entries/', views.filter_entries, name='filter_entries'),
 ]
