@@ -7,6 +7,12 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Entry, NoAttributSet, TimeFrame
 from .forms import EntryForm, TimeFrameForm, SearchForm, BulkDeleteForm
 from ..utils import getNavigationItems, build_filters_from_form
+from rest_framework import generics
+from .serializers import EntrySerializer
+
+class EntryListCreateView(generics.ListCreateAPIView):
+    queryset = Entry.objects.all()
+    serializer_class = EntrySerializer
 
 @method_decorator(login_required, name='dispatch')
 class AddEntry(CreateView):
