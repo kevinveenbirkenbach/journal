@@ -8,6 +8,7 @@
             <p>
                 {{ field.label_tag }} {{ field }}
                 <button type="button" class="btn btn-danger btn-sm clear-field" data-field-id="{{ field.auto_id }}">X</button>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></button>
             </p>
         {% endfor %}
         <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
@@ -57,10 +58,11 @@
                 $('input[type="checkbox"]').prop('checked', this.checked);
             });
             
-            // Clear the content of the associated field when the delete button is clicked
+            // Clear the content of the associated field when the delete button is clicked and submit the form
             $('.clear-field').click(function() {
                 var fieldId = $(this).data('field-id');
                 $('#' + fieldId).val('');
+                $(this).closest('form').submit();  // Submit the form after clearing the field
             });
         });
     </script>
