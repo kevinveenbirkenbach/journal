@@ -1,12 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Entry, Location, TimeFrame, NoAttributSet
-from .forms import EntryForm, LocationForm, TimeFrameForm, BulkDeleteForm, SearchForm
+from ..models import Entry, TimeFrame, NoAttributSet
+from ..forms import EntryForm, TimeFrameForm, SearchForm, BulkDeleteForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.urls import reverse
-from django.db.models import Q
-from django.utils import timezone
-from datetime import datetime
+from django.http import HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
 
 def getNavigationItems(request):
     nav_items = [
@@ -24,25 +23,6 @@ def getNavigationItems(request):
         nav_items.append({'url': reverse('login'), 'label': _('Login')})
     return nav_items
 
-@login_required
-def profile(request):
-    return render(request, 'journal_app/profile.html')
-
-def index(request):
-    entries = Entry.objects.all()
-    return render(request, 'journal_app/index.html', {'entries': entries, 'nav_items': getNavigationItems(request)})
-
-@login_required
-def add_location(request):
-    if request.method == 'POST':
-        form = LocationForm(request.POST)
-        if form.is_valid():
-            form.save()
-    else:
-        form = LocationForm()
-
-    locations = Location.objects.all()
-    return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
 def filter_entries(request):
     search_form = SearchForm(request.GET)
@@ -158,4 +138,3 @@ def delete_entry(request, entry_id):
         return redirect('index')  # Nach der Löschung zur Indexseite umleiten
 
     return render(request, 'journal_app/entry/delete_entry.html', {'entry': entry, 'nav_items': getNavigationItems(request)})
-

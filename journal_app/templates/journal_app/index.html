@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
 {% block content %}
-<ul>
-    {% for entry in entries %}
-    <li>{{ entry.user.username }} <a href="{% url 'edit_entry' entry.id %}">Edit Entry</a></li>
-    {% endfor %}
-</ul>
+Hello! 
 {% endblock %}
