@@ -6,45 +6,18 @@
     <h1>{% trans "Filter Entries" %}</h1>
     <form method="get" action="{% url 'filter_entries' %}" class="mb-4">
         <div class="row">
+            {% for field in query_params %}
             <div class="col-md-4">
                 <div class="form-group">
-                    <input type="text" name="q" class="form-control" placeholder="{% trans 'Search' %}">
+                    {% if field == 'q' %}
+                        <input type="text" name="{{ field }}" class="form-control" placeholder="{% trans 'Search' %}">
+                    {% else %}
+                        <label>{% trans field %}</label>
+                        <input type="datetime-local" name="{{ field }}" class="form-control">
+                    {% endif %}
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <input type="datetime-local" name="start_time" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <input type="datetime-local" name="end_time" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>{% trans "Start Time Greater Than" %}</label>
-                    <input type="datetime-local" name="start_time_gte" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>{% trans "Start Time Less Than" %}</label>
-                    <input type="datetime-local" name="start_time_lte" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>{% trans "End Time Greater Than" %}</label>
-                    <input type="datetime-local" name="end_time_gte" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>{% trans "End Time Less Than" %}</label>
-                    <input type="datetime-local" name="end_time_lte" class="form-control">
-                </div>
-            </div>
+            {% endfor %}
         </div>
         <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
     </form>

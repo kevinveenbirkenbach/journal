@@ -45,72 +45,23 @@ def add_location(request):
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
 def filter_entries(request):
+    query_params = ['q', 'start_time', 'end_time', 'start_time_gte', 'start_time_lte', 'end_time_gte', 'end_time_lte']
     if request.method == 'GET':
-        # Get the query parameters
-        query = request.GET.get('q')
-        start_time = request.GET.get('start_time')
-        end_time = request.GET.get('end_time')
+        filters = {}
+        for param in query_params:
+            value = request.GET.get(param)
+            if value:
+                if 'time' in param:
+                    try:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M')
+                        filters[f'time_frame__{param}'] = value
+                    except ValueError:
+                        pass
+                else:
+                    filters[f'{param}__icontains'] = value
 
-        # Create an empty queryset
-        filtered_entries = Entry.objects.all()
-
-        # Filter by search query
-        if query:
-            filtered_entries = filtered_entries.filter(Q(title__icontains=query) | Q(description__icontains=query))
-
-        start_time_gte = request.GET.get('start_time_gte')
-        if start_time_gte:
-            try:
-                start_time_gte = datetime.strptime(start_time_gte, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__start_time__gte=start_time_gte)
-            except ValueError:
-                pass
-            
-        # Filter by start_time_lte
-        start_time_lte = request.GET.get('start_time_lte')
-        if start_time_lte:
-            try:
-                start_time_lte = datetime.strptime(start_time_lte, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__start_time__lte=start_time_lte)
-            except ValueError:
-                pass
-            
-        # Filter by end_time_gte
-        end_time_gte = request.GET.get('end_time_gte')
-        if end_time_gte:
-            try:
-                end_time_gte = datetime.strptime(end_time_gte, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__end_time__gte=end_time_gte)
-            except ValueError:
-                pass
-            
-        # Filter by end_time_lte
-        end_time_lte = request.GET.get('end_time_lte')
-        if end_time_lte:
-            try:
-                end_time_lte = datetime.strptime(end_time_lte, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__end_time__lte=end_time_lte)
-            except ValueError:
-                pass
-
-        # Filter by time frame
-        if start_time:
-            try:
-                start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__start_time__gte=start_time)
-            except ValueError:
-                pass
-
-        if end_time:
-            try:
-                end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M')
-                filtered_entries = filtered_entries.filter(time_frame__end_time__lte=end_time)
-            except ValueError:
-                pass
-
-        return render(request, 'journal_app/filter_entries.html', {'filtered_entries': filtered_entries})
-
-
+        filtered_entries = Entry.objects.filter(**filters)
+        return render(request, 'journal_app/filter_entries.html', {'filtered_entries': filtered_entries, 'query_params': query_params})
 
 @login_required
 def edit_entry(request, entry_id):
