@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Entry, Location, TimeFrame, NoAttributSet
 from .forms import EntryForm, LocationForm, TimeFrameForm
 from django.contrib.auth.decorators import login_required
@@ -22,6 +22,19 @@ def add_location(request):
 
     locations = Location.objects.all()
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations})
+
+@login_required
+def edit_entry(request, entry_id):
+    entry = get_object_or_404(Entry, id=entry_id)
+
+    if request.method == 'POST':
+        form = EntryForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+    else:
+        form = EntryForm(instance=entry)
+
+    return render(request, 'journal_app/edit_entry.html', {'form': form, 'entry': entry})
 
 @login_required
 def add_entry(request): 
