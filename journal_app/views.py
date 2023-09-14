@@ -4,6 +4,9 @@ from .forms import EntryForm, LocationForm, TimeFrameForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.urls import reverse
+from django.db.models import Q
+from django.utils import timezone
+from datetime import datetime
 
 def getNavigationItems(request):
     nav_items = [
@@ -43,18 +46,34 @@ def add_location(request):
 
 def filter_entries(request):
     if request.method == 'GET':
+        # Get the query parameters
+        query = request.GET.get('q')
         start_time = request.GET.get('start_time')
         end_time = request.GET.get('end_time')
 
-        if start_time and end_time:
-            filtered_entries = Entry.objects.filter(
-                time_frame__start_time__gte=start_time,
-                time_frame__end_time__lte=end_time
-            )
-        else:
-            filtered_entries = []
+        # Create an empty queryset
+        filtered_entries = Entry.objects.all()
 
-        return render(request, 'journal_app/filter_entries.html', {'filtered_entries': filtered_entries, 'nav_items': getNavigationItems(request)})
+        # Filter by search query
+        if query:
+            filtered_entries = filtered_entries.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+        # Filter by time frame
+        if start_time:
+            try:
+                start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__start_time__gte=start_time)
+            except ValueError:
+                pass
+
+        if end_time:
+            try:
+                end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M')
+                filtered_entries = filtered_entries.filter(time_frame__end_time__lte=end_time)
+            except ValueError:
+                pass
+
+        return render(request, 'journal_app/filter_entries.html', {'filtered_entries': filtered_entries})
 
 
 
