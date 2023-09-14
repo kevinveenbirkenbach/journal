@@ -1,13 +1,6 @@
-{% extends "base.html" %}
-{% block content %}
-
-{% load widget_tweaks %}
-
-<h1 class="mb-4">Add Entry</h1>
-
 {% include "errors.html" with form=time_frame_form form_name="TimeFrame" %}
 {% include "errors.html" with form=entry_form form_name="Entry" %}
-
+{% load widget_tweaks %}
 <form method="POST" class="needs-validation" novalidate>
     {% csrf_token %}
     
@@ -37,5 +30,3 @@
 
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-
-{% endblock %}

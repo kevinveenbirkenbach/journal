@@ -31,13 +31,13 @@ def edit_entry(request, entry_id):
         return HttpResponseForbidden(_("The user needs to own the page to edit it"))
 
     if request.method == 'POST':
-        form = EntryForm(request.POST, instance=entry)
-        if form.is_valid():
-            form.save()
+        entry_form = EntryForm(request.POST, instance=entry)
+        if entry_form.is_valid():
+            entry_form.save()
     else:
-        form = EntryForm(instance=entry)
+        entry_form = EntryForm(instance=entry)
 
-    return render(request, 'journal_app/edit_entry.html', {'form': form, 'entry': entry})
+    return render(request, 'journal_app/entry/edit_entry.html', {'entry_form': entry_form, 'time_frame_form': TimeFrameForm(instance=entry.time_frame), 'entry': entry})
 
 @login_required
 def add_entry(request): 
@@ -78,7 +78,5 @@ def add_entry(request):
             
             # Save many-to-many data if needed
             entry_form.save_m2m()
-
-    entries = Entry.objects.all()
-    return render(request, 'journal_app/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'entries': entries})
+    return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form})
 

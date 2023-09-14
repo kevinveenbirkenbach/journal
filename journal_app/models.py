@@ -47,4 +47,18 @@ class Entry(models.Model):
         if not(self.title or self.description):
             raise ValidationError(_('Title or description must be set.'))
     def __str__(self):
-        return f'Entry from {self.time_frame.start_time if self.time_frame else "N/A"} - {self.description[:20]}'
+        string = f'Entry #{self.id}: '
+        if self.title:
+            string += f'{self.title}: '
+        if self.description:
+            string += f'{self.description}: '
+        if self.time_frame:
+            if self.time_frame.start_time:
+                string += str(self.time_frame.start_time) + ' '
+                if self.time_frame.end_time:
+                    string += "-"
+            if self.time_frame.end_time:
+                string += str(self.time_frame.start_time) + ' '
+        if string.count('') >= 40:
+            string = f'{string[:40]}...'
+        return string

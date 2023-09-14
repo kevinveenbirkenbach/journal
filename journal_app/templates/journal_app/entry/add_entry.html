@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="mb-4">Add</h1>
+{% include "journal_app/entry/entry.html" with entry_form=entry_form time_frame_form=time_frame_form%}
+
+{% endblock %}
