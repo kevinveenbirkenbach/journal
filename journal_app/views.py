@@ -62,6 +62,7 @@ def filter_entries(request):
         'filtered_entries': filtered_entries,
         'bulk_delete_form': bulk_delete_form,
         'search_form': search_form,
+        'nav_items': getNavigationItems(request),
     }
     return render(request, 'journal_app/filter_entries.html', context)
 
