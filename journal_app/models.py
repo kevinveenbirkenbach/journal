@@ -14,7 +14,7 @@ class TimeFrame(models.Model):
     
     def clean(self):
         if not self.end_time and not self.start_time:
-            raise NoAttributSet(_('Start or end time must be set.123'))
+            raise NoAttributSet(_('Start or end time must be set.'))
         if self.end_time and self.start_time:
             if self.end_time <= self.start_time:
                 raise ValidationError(_('End time must be after start time.'))

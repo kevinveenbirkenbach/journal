@@ -26,3 +26,13 @@ class LocationForm(forms.ModelForm):
         
 class BulkDeleteForm(forms.Form):
     selected_entries = forms.ModelMultipleChoiceField(queryset=Entry.objects.all(), widget=forms.CheckboxSelectMultiple)
+
+class SearchForm(forms.Form):
+    title = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Search'}))
+    description = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Search'}))
+    start_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+    end_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+    start_time_gte = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+    end_time_gte = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+    start_time_lte = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+    end_time_lte = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
