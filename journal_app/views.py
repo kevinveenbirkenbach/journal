@@ -45,40 +45,21 @@ def add_location(request):
     return render(request, 'journal_app/add_location.html', {'form': form, 'locations': locations, 'nav_items': getNavigationItems(request)})
 
 
+from django.db.models import Q
+from django.shortcuts import render, redirect
+from .models import Entry
+from .forms import SearchForm, BulkDeleteForm
+
 def filter_entries(request):
-    filters = {}
     search_form = SearchForm(request.GET)
+    bulk_delete_form = BulkDeleteForm(request.POST or None)
 
     if request.method == 'GET' and search_form.is_valid():
-        title = search_form.cleaned_data.get('title')
-        description = search_form.cleaned_data.get('description')
-        start_time = search_form.cleaned_data.get('time_frame__start_time')
-        end_time = search_form.cleaned_data.get('time_frame__end_time')
-        start_time_gte = search_form.cleaned_data.get('time_frame__start_time_gte')
-        end_time_gte = search_form.cleaned_data.get('time_frame__end_time_gte')
-        start_time_lte = search_form.cleaned_data.get('time_frame__start_time_lte')
-        end_time_lte = search_form.cleaned_data.get('time_frame__end_time_lte')
+        filters = build_filters_from_form(search_form.cleaned_data)
+        filtered_entries = Entry.objects.filter(**filters)
+    else:
+        filtered_entries = Entry.objects.all()
 
-        if title:
-            filters['title__icontains'] = title
-        if description:
-            filters['description__icontains'] = description
-        if start_time:
-            filters['time_frame__start_time'] = start_time
-        if end_time:
-            filters['time_frame__end_time'] = end_time
-        if start_time_gte:
-            filters['time_frame__start_time__gte'] = start_time_gte
-        if end_time_gte:
-            filters['time_frame__end_time__gte'] = end_time_gte
-        if start_time_lte:
-            filters['time_frame__start_time__lte'] = start_time_lte
-        if end_time_lte:
-            filters['time_frame__end_time__lte'] = end_time_lte
-
-    filtered_entries = Entry.objects.filter(**filters)
-
-    bulk_delete_form = BulkDeleteForm(request.POST or None)
     if request.method == 'POST' and bulk_delete_form.is_valid():
         selected_entries = bulk_delete_form.cleaned_data['selected_entries']
         selected_entries.delete()
@@ -89,6 +70,27 @@ def filter_entries(request):
         'search_form': search_form,
     }
     return render(request, 'journal_app/filter_entries.html', context)
+
+def build_filters_from_form(cleaned_data):
+    filters = {}
+
+    filter_mapping = {
+        'title': 'title__icontains',
+        'description': 'description__icontains',
+        'time_frame__start_time': 'time_frame__start_time',
+        'time_frame__end_time': 'time_frame__end_time',
+        'time_frame__start_time_gte': 'time_frame__start_time__gte',
+        'time_frame__end_time_gte': 'time_frame__end_time__gte',
+        'time_frame__start_time_lte': 'time_frame__start_time__lte',
+        'time_frame__end_time_lte': 'time_frame__end_time__lte',
+    }
+
+    for field_name, filter_key in filter_mapping.items():
+        field_value = cleaned_data.get(field_name)
+        if field_value:
+            filters[filter_key] = field_value
+
+    return filters
 
 @login_required
 def edit_entry(request, entry_id):
