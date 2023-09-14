@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Entry, Location, TimeFrame, NoAttributSet
 from .forms import EntryForm, LocationForm, TimeFrameForm
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext as _
 
 @login_required
 def profile(request):
@@ -26,6 +27,8 @@ def add_location(request):
 @login_required
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
+    if entry.user != request.user:
+        return HttpResponseForbidden(_("The user needs to own the page to edit it"))
 
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
