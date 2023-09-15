@@ -124,7 +124,7 @@ def add_entry(request):
             return response
         else:
             status_code=400
-    return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'nav_items': getNavigationItems(request)},status_code)
+    return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'nav_items': getNavigationItems(request)},status=status_code)
 
 @login_required
 def delete_entry(request, entry_id):
