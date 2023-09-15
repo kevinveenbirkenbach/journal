@@ -11,6 +11,11 @@ class TimeFrameForm(forms.ModelForm):
 
 class EntryForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(), required=False)
+    parent_entries = forms.ModelMultipleChoiceField(
+        queryset=Entry.objects.all(),
+        widget=forms.SelectMultiple(attrs={'hidden': True}),
+        required=False
+    )
     
     class Meta:
         model = Entry

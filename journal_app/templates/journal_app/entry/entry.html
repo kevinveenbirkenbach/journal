@@ -1,19 +1,24 @@
 {% include "errors.html" with form=time_frame_form form_name="TimeFrame" %}
 {% include "errors.html" with form=entry_form form_name="Entry" %}
 {% load widget_tweaks %}
+{% load custom_tags %}
 <form method="POST" class="needs-validation" novalidate>
     {% csrf_token %}
-    
-    <!-- Render Entry Form Fields -->
-    {% for field in entry_form %}
-        <div class="form-group">
+
+<!-- Render Entry Form Fields -->
+{% for field in entry_form %}
+    <div class="form-group" {% if field|has_hidden_attr %}style="display: none;"{% endif %}>
+        {% if not field|has_hidden_attr %}
             {{ field.label_tag }}
-            {{ field|add_class:"form-control" }}
-            {% if field.errors %}
-                <span class="text-danger">{{ field.errors }}</span>
-            {% endif %}
-        </div>
-    {% endfor %}
+        {% endif %}
+        {{ field|add_class:"form-control" }}
+        {% if field.errors %}
+            <span class="text-danger">{{ field.errors }}</span>
+        {% endif %}
+    </div>
+{% endfor %}
+
+
 
     <!-- Render TimeFrame Form Fields -->
     <div class="form-row">
@@ -28,14 +33,10 @@
         {% endfor %}
     </div>
 
-<!-- Suchfeld -->
 <input type="text" id="parent-search" placeholder="Eltern suchen...">
 
-<!-- Container für die angezeigten Eltern-Buttons -->
 <div id="selected-parents"></div>
 
-
-<!-- AJAX-Logik -->
 <script>
     $(document).ready(function() {
         const $selectField = $('#id_parent_entries');

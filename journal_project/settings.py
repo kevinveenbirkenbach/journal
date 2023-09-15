@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'simple_history',
-    'rest_framework'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
