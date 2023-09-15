@@ -37,79 +37,62 @@
 
 <!-- AJAX-Logik -->
 <script>
-    function createActiveButtonsForSelectedOptions() {
-        let selectField = document.getElementById('id_parent_entries');
-        let container = document.getElementById('selected-parents');
+    $(document).ready(function() {
+        const $selectField = $('#id_parent_entries');
+        const $container = $('#selected-parents');
     
-        Array.from(selectField.options).forEach(option => {
-            if (option.selected) {
-                let btn = document.createElement('span');
-                btn.textContent = option.textContent;
-                btn.id = `btn-${option.value}`;
-                btn.className = 'btn btn-primary active'; // Hier setzen wir die Klassen für aktive Buttons
-                container.appendChild(btn);
+        function createButton(text, id, btnClass) {
+            return $('<span/>', {
+                text: text,
+                id: `btn-${id}`,
+                class: `btn btn-primary ${btnClass}`
+            });
+        }
+    
+        function createActiveButtonsForSelectedOptions() {
+            $selectField.find('option:selected').each(function() {
+                let $btn = createButton($(this).text(), $(this).val(), 'active');
+                $container.append($btn);
+            });
+        }
+    
+        function toggleButton($btn, entry) {
+            if ($btn.hasClass('inactive')) {
+                $btn.removeClass('inactive').addClass('active');
+                
+                const $option = $('<option/>', {
+                    value: entry.id,
+                    text: entry.title,
+                    selected: true
+                });
+                $selectField.append($option);
+            } else {
+                $btn.removeClass('active').addClass('inactive');
+                $selectField.find(`option[value="${entry.id}"]`).remove();
             }
-        });
-    }
+        }
     
-    document.getElementById('parent-search').addEventListener('input', function(e) {
-        let query = e.target.value;
+        $('#parent-search').on('input', function() {
+            let query = $(this).val();
     
-        fetch(`/search_entries/?query=${query}`)
-        .then(response => response.json())
-        .then(entries => {
-            let container = document.getElementById('selected-parents');
-            let selectField = document.getElementById('id_parent_entries');
+            $.getJSON(`/search_entries/?query=${query}`, function(entries) {
+                $container.find('.inactive').remove();
     
-            // Alle inaktiven span-Elemente entfernen
-            let inactives = container.querySelectorAll('.inactive');
-            inactives.forEach(inactiveSpan => {
-                container.removeChild(inactiveSpan);
-            });
+                $.each(entries, function(_, entry) {
+                    if (!$(`#btn-${entry.id}`).length) {
+                        const $btn = createButton(entry.title, entry.id, 'inactive');
+                        $btn.on('click', function() {
+                            toggleButton($btn, entry);
+                        });
     
-            // Nur Buttons hinzufügen, die noch nicht vorhanden sind
-            entries.forEach(entry => {
-                if (!document.getElementById(`btn-${entry.id}`)) {
-                    // Button für die visuelle Darstellung
-                    let btn = document.createElement('span');
-                    btn.textContent = entry.title;
-                    btn.id = `btn-${entry.id}`;
-                    btn.className = 'btn btn-primary inactive'; // Hier setzen wir die Klassen
-    
-                    btn.addEventListener('click', function() {
-                        if (btn.classList.contains('inactive')) {
-                            // Button aktivieren
-                            btn.classList.remove('inactive');
-                            btn.classList.add('active');
-    
-                            // Option für die Datenübertragung hinzufügen
-                            let option = document.createElement('option');
-                            option.value = entry.id;
-                            option.textContent = entry.title;
-                            option.selected = true;
-                            selectField.appendChild(option);
-                        } else {
-                            // Button deaktivieren
-                            btn.classList.remove('active');
-                            btn.classList.add('inactive');
-    
-                            // Option aus dem Select-Feld entfernen
-                            let optionToRemove = Array.from(selectField.options).find(option => option.value == entry.id);
-                            if (optionToRemove) {
-                                selectField.removeChild(optionToRemove);
-                            }
-                        }
-                    });
-    
-                    container.appendChild(btn);
-                }
+                        $container.append($btn);
+                    }
+                });
             });
         });
-    });
     
-    // Rufen Sie die Funktion beim Laden der Seite auf
-    window.addEventListener('load', createActiveButtonsForSelectedOptions);    
-    
+        createActiveButtonsForSelectedOptions();
+    });    
 </script>
 
 <style>
