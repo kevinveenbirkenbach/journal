@@ -37,6 +37,21 @@
 
 <!-- AJAX-Logik -->
 <script>
+    function createActiveButtonsForSelectedOptions() {
+        let selectField = document.getElementById('id_parent_entries');
+        let container = document.getElementById('selected-parents');
+    
+        Array.from(selectField.options).forEach(option => {
+            if (option.selected) {
+                let btn = document.createElement('span');
+                btn.textContent = option.textContent;
+                btn.id = `btn-${option.value}`;
+                btn.className = 'btn btn-primary active'; // Hier setzen wir die Klassen für aktive Buttons
+                container.appendChild(btn);
+            }
+        });
+    }
+    
     document.getElementById('parent-search').addEventListener('input', function(e) {
         let query = e.target.value;
     
@@ -51,7 +66,7 @@
             inactives.forEach(inactiveSpan => {
                 container.removeChild(inactiveSpan);
             });
-
+    
             // Nur Buttons hinzufügen, die noch nicht vorhanden sind
             entries.forEach(entry => {
                 if (!document.getElementById(`btn-${entry.id}`)) {
@@ -91,6 +106,9 @@
             });
         });
     });
+    
+    // Rufen Sie die Funktion beim Laden der Seite auf
+    window.addEventListener('load', createActiveButtonsForSelectedOptions);    
     
 </script>
 
