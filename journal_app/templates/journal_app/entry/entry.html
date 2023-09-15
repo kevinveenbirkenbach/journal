@@ -41,17 +41,23 @@
         const $selectField = $('#id_parent_entries');
         const $container = $('#selected-parents');
     
-        function createButton(text, id, btnClass) {
-            return $('<span/>', {
+        function createButton(text, id, btnClass, entry) {
+            const $btn = $('<span/>', {
                 text: text,
                 id: `btn-${id}`,
                 class: `btn btn-primary ${btnClass}`
             });
+    
+            $btn.on('click', function() {
+                toggleButton($btn, entry || { id: id, title: text });
+            });
+    
+            return $btn;
         }
     
         function createActiveButtonsForSelectedOptions() {
             $selectField.find('option:selected').each(function() {
-                let $btn = createButton($(this).text(), $(this).val(), 'active');
+                const $btn = createButton($(this).text(), $(this).val(), 'active');
                 $container.append($btn);
             });
         }
@@ -59,7 +65,7 @@
         function toggleButton($btn, entry) {
             if ($btn.hasClass('inactive')) {
                 $btn.removeClass('inactive').addClass('active');
-                
+    
                 const $option = $('<option/>', {
                     value: entry.id,
                     text: entry.title,
@@ -80,11 +86,7 @@
     
                 $.each(entries, function(_, entry) {
                     if (!$(`#btn-${entry.id}`).length) {
-                        const $btn = createButton(entry.title, entry.id, 'inactive');
-                        $btn.on('click', function() {
-                            toggleButton($btn, entry);
-                        });
-    
+                        const $btn = createButton(entry.title, entry.id, 'inactive', entry);
                         $container.append($btn);
                     }
                 });
@@ -92,7 +94,8 @@
         });
     
         createActiveButtonsForSelectedOptions();
-    });    
+    });
+    
 </script>
 
 <style>
