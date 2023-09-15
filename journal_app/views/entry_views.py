@@ -82,17 +82,14 @@ def add_entry(request):
     entry_form = EntryForm(None)
     status_code = 200
     if request.method == "POST":
-        status_code = 201
         entry_form = EntryForm(request.POST)
         if ('end_time' in request.POST and request.POST['end_time']) or ('start_time' in request.POST and request.POST['start_time']):
             time_frame_form = TimeFrameForm(request.POST)
         time_frame = None
         try:
-            status_code = 207
             if time_frame_form.is_valid():
                  # Save the TimeFrame instance but don't commit to the database yet
                 time_frame = time_frame_form.save()
-                status_code = 201
         except NoAttributSet:
             time_frame_form = TimeFrameForm(None)
         
@@ -119,9 +116,7 @@ def add_entry(request):
             entry_form.save_m2m()
             
             # Redirect 
-            response = redirect('edit_entry', entry_id=entry.id)
-            response.status_code = status_code
-            return response
+            return redirect('edit_entry', entry_id=entry.id)
         else:
             status_code=400
     return render(request, 'journal_app/entry/add_entry.html', {'entry_form': entry_form, 'time_frame_form': time_frame_form, 'nav_items': getNavigationItems(request)},status=status_code)

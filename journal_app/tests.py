@@ -26,9 +26,9 @@ class EntryCRUDTest(TestCase):
         def post_entry(data):
             return self.client.post(reverse('add_entry'), data)
         
-        # Successful creation, expect 201 status code
+        # Successful creation
         response = post_entry(self.entry_data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 302)
         
         # Create wrong timeframe data expect 207
         #invalid_timeframe_data = {
@@ -47,7 +47,7 @@ class EntryCRUDTest(TestCase):
             'start_time': datetime.now()
         }
         response = post_entry(timeframe_data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 302)
 
         # Create correct timeframe
         timeframe_data = {
@@ -56,7 +56,7 @@ class EntryCRUDTest(TestCase):
             'end_time': datetime.now()
         }
         response = post_entry(timeframe_data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 302)
 
         # Convert the 'start_time' and 'end_time' from the POST data to timezone aware datetime objects
         start_time = self.entry_data['start_time'].replace(tzinfo=timezone.utc)
@@ -108,7 +108,7 @@ class EntryCRUDTest(TestCase):
     def test_entry_crud_operations(self):
         # 1. Create an entry
         response = self.client.post(reverse('add_entry'), self.entry_data)
-        self.assertEqual(response.status_code, 201)  # Expecting a redirect after creation
+        self.assertEqual(response.status_code, 302)  # Expecting a redirect after creation
 
         # 2. Read/Check if the entry was added
         entries = Entry.objects.all()
