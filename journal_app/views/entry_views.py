@@ -1,12 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from ..models import Entry, TimeFrame, NoAttributSet
-from ..forms import EntryForm, TimeFrameForm, SearchForm, BulkDeleteForm
+from journal_app.models import Entry, TimeFrame, NoAttributSet
+from journal_app.forms import EntryForm, TimeFrameForm, SearchForm, BulkDeleteForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from .common_views import getNavigationItems
+from rest_framework import generics
+from journal_app.serializers import EntrySerializer
+
+class EntryListCreateView(generics.ListCreateAPIView):
+    queryset = Entry.objects.all()
+    serializer_class = EntrySerializer
+
+class EntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Entry.objects.all()
+    serializer_class = EntrySerializer
 
 def list_entries(request):
     search_form = SearchForm(request.GET)

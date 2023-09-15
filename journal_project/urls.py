@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from journal_app.views import views, entry_views, profile_views, location_views
 from django.contrib.auth import views as auth_views
+from journal_app.views.entry_views import EntryListCreateView, EntryRetrieveUpdateDestroyView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,4 +15,7 @@ urlpatterns = [
     path('entry/edit/<int:entry_id>/', entry_views.edit_entry, name='edit_entry'),  # ... und hier
     path('entry/delete/<int:entry_id>/', entry_views.delete_entry, name='delete_entry'),  # ... und hier
     path('entry/list', entry_views.list_entries, name='list_entries'),
+    # API
+    path('api/entry/', EntryListCreateView.as_view(), name='api_entry_list_create'),
+    path('api/entry/<int:pk>/', EntryRetrieveUpdateDestroyView.as_view(), name='api_entry_retrieve_update_destroy'),
 ]
