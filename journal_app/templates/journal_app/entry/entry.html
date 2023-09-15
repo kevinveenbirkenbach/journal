@@ -28,5 +28,84 @@
         {% endfor %}
     </div>
 
+<!-- Suchfeld -->
+<input type="text" id="parent-search" placeholder="Eltern suchen...">
+
+<!-- Container für die angezeigten Eltern-Buttons -->
+<div id="selected-parents"></div>
+
+
+<!-- AJAX-Logik -->
+<script>
+    document.getElementById('parent-search').addEventListener('input', function(e) {
+        let query = e.target.value;
+    
+        fetch(`/search_entries/?query=${query}`)
+        .then(response => response.json())
+        .then(entries => {
+            let container = document.getElementById('selected-parents');
+            let selectField = document.getElementById('id_parent_entries');
+    
+            // Alle inaktiven span-Elemente entfernen
+            let inactives = container.querySelectorAll('.inactive');
+            inactives.forEach(inactiveSpan => {
+                container.removeChild(inactiveSpan);
+            });
+
+            // Nur Buttons hinzufügen, die noch nicht vorhanden sind
+            entries.forEach(entry => {
+                if (!document.getElementById(`btn-${entry.id}`)) {
+                    // Button für die visuelle Darstellung
+                    let btn = document.createElement('span');
+                    btn.textContent = entry.title;
+                    btn.id = `btn-${entry.id}`;
+                    btn.className = 'btn btn-primary inactive'; // Hier setzen wir die Klassen
+    
+                    btn.addEventListener('click', function() {
+                        if (btn.classList.contains('inactive')) {
+                            // Button aktivieren
+                            btn.classList.remove('inactive');
+                            btn.classList.add('active');
+    
+                            // Option für die Datenübertragung hinzufügen
+                            let option = document.createElement('option');
+                            option.value = entry.id;
+                            option.textContent = entry.title;
+                            option.selected = true;
+                            selectField.appendChild(option);
+                        } else {
+                            // Button deaktivieren
+                            btn.classList.remove('active');
+                            btn.classList.add('inactive');
+    
+                            // Option aus dem Select-Feld entfernen
+                            let optionToRemove = Array.from(selectField.options).find(option => option.value == entry.id);
+                            if (optionToRemove) {
+                                selectField.removeChild(optionToRemove);
+                            }
+                        }
+                    });
+    
+                    container.appendChild(btn);
+                }
+            });
+        });
+    });
+    
+</script>
+
+<style>
+    .inactive {
+        background-color: #e0e0e0;
+    }
+
+    .active {
+        background-color: green;
+        color: white;
+    }
+</style>
+
+
+
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>

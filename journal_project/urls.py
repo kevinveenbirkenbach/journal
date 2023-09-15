@@ -18,4 +18,5 @@ urlpatterns = [
     # API
     path('api/entry/', EntryListCreateView.as_view(), name='api_entry_list_create'),
     path('api/entry/<int:pk>/', EntryRetrieveUpdateDestroyView.as_view(), name='api_entry_retrieve_update_destroy'),
+    path('search_entries/', views.search_entries, name='search_entries'),
 ]
