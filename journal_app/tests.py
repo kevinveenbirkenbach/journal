@@ -3,6 +3,87 @@ from django.urls import reverse
 from journal_app.models import Entry
 from django.contrib.auth.models import User
 from datetime import datetime, timezone, timedelta
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+from journal_app.models import Entry
+
+class EntryCRUDAPITest(APITestCase):
+    
+    def setUp(self):
+        # Create a user first
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.login(username='testuser', password='testpass') # Log in the client
+    
+        self.entry_data = {
+            "title": "Test Eintragstitel",
+            "description": "Test Beschreibung",
+            "user_id": self.user.id  # Use the ID of the created user for the entry
+        }
+        self.entry = Entry.objects.create(**self.entry_data)
+
+        
+    # CREATE test
+    def test_create_entry(self):
+        url = reverse('api_entry_list_create')
+        entry_data = {
+            "title": "Test Eintragstitel",
+            "description": "Test Beschreibung",
+            "user": self.user.id  
+        }
+        response = self.client.post(url, entry_data, format='json')
+        try:
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        except AssertionError:
+            print("test_create_entry failed!")
+            print("Response status code:", response.status_code)
+            print("Response content:", response.content)
+            raise
+        self.assertEqual(Entry.objects.count(), 2)
+
+    # READ test
+    def test_retrieve_entry(self):
+        url = reverse('api_entry_retrieve_update_destroy', args=[self.entry.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], self.entry.title)
+
+    # UPDATE test
+    def test_update_entry(self):
+        url = reverse('api_entry_retrieve_update_destroy', args=[self.entry.id])
+        updated_data = {
+            "title": "Neuer Eintragstitel",
+            "description": "Neue Beschreibung",
+            "user": self.user.id
+        }
+        response = self.client.put(url, updated_data, format='json')
+
+        try:
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        except AssertionError:
+            print("test_update_entry failed!")
+            print("Response status code:", response.status_code)
+            print("Response content:", response.content)
+            raise
+        self.entry.refresh_from_db()
+        self.assertEqual(self.entry.title, updated_data['title'])
+
+    # DELETE test
+    def test_delete_entry(self):
+        url = reverse('api_entry_retrieve_update_destroy', args=[self.entry.id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Entry.objects.filter(id=self.entry.id).exists())
+
+    # LIST test
+    def test_list_entries(self):
+        url = reverse('api_entry_list_create')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
 
 class EntryCRUDTest(TestCase):
 
