@@ -8,7 +8,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from .common_views import getNavigationItems
 
-def filter_entries(request):
+def list_entries(request):
     search_form = SearchForm(request.GET)
     bulk_delete_form = BulkDeleteForm(request.POST or None)
 
@@ -28,7 +28,7 @@ def filter_entries(request):
         'search_form': search_form,
         'nav_items': getNavigationItems(request),
     }
-    return render(request, 'journal_app/filter_entries.html', context)
+    return render(request, 'journal_app/entry/entries_list.html', context)
 
 def build_filters_from_form(cleaned_data):
     filters = {}

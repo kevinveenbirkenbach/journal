@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 def getNavigationItems(request):
     nav_items = [
         {'url': reverse('index'), 'label': _('Home')},
-        {'url': reverse('filter_entries'), 'label': _('Filter Entries')},
+        {'url': reverse('list_entries'), 'label': _('Filter Entries')},
     ]
 
     if request.user.is_authenticated:

@@ -10,8 +10,8 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/profile/', profile_views.profile, name='profile'),
-    path('add_entry/', entry_views.add_entry, name='add_entry'),  # Verwenden Sie entry_views hier
+    path('entry/add', entry_views.add_entry, name='add_entry'),  # Verwenden Sie entry_views hier
     path('entry/edit/<int:entry_id>/', entry_views.edit_entry, name='edit_entry'),  # ... und hier
     path('entry/delete/<int:entry_id>/', entry_views.delete_entry, name='delete_entry'),  # ... und hier
-    path('filter-entries/', entry_views.filter_entries, name='filter_entries'),
+    path('entry/list', entry_views.list_entries, name='list_entries'),
 ]
